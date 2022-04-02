@@ -1,0 +1,21 @@
+7 important concept in javascript
+1.scope
+there are two type of scope 
+local and global
+2.IIFE(immediately invoked function expression )
+syntax:
+(function() {
+    /*statement*/
+  })()
+why we use IIFE:
+->privacy(any variables declared within the IIFE cannot be accessed by the outside world)
+3.Hosting
+Hosting in javascript is a machenism in which all varaible and function declaration
+are move to the top of their scope before the code is execute...
+->we can call the function first and then define.it doesn't give error because of Hosting
+4.closure
+->A clouse is a simple function inside other function that have access to the outer function varaible but not vice versa
+5.callback
+->callback is simple function that is passed to the other function as an parameter and invoked inside the other function
+6.promises
+7.async & await

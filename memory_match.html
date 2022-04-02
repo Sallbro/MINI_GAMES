@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p {
+            font-size: 40px;
+            margin-top: 5px;
+        }
+
+        td {
+            background-color: transparent;
+            height: 70px;
+            width: 70px;
+        }
+
+        td,
+        .inner,
+        .front,
+        .back {
+            border-radius: 4px;
+        }
+
+        table {
+            margin-top: 80px;
+        }
+
+        .inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            -webkit-transition: -webkit-transform 0.8s;
+            transition: -webkit-transform 0.8s;
+            -o-transition: transform 0.8s;
+            transition: transform 0.8s;
+            transition: transform 0.8s, -webkit-transform 0.8s;
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            -webkit-transform: rotateY(0deg);
+            transform: rotateY(0deg);
+        }
+
+        .front {
+            background-color: rgba(178, 10, 255, 0.3);
+        }
+
+        .back {
+            background-color: rgba(23, 0, 231, 0.5);
+            -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
+        }
+
+        .front,
+        .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"> </script>
+</head>
+
+
+<body>
+    <div id="ol"></div>
+    <h1>memory matching</h1>
+    <button onclick="start(3,4)">START</button>
+    <div id="title" style="height: 40px;">
+        <span id="moves"></span>
+        <span id="time"></span>
+    </div>
+    <table cellspacing="0"></table>
+
+    <script>
+        //varaible
+        let em = ["💐", "🌹", "🌻", "🏵️", "🌺", "🌴", "🌈", "🍓", "🍒", "🍎", "🍉", "🍊", "🥭", "🍍", "🍋", "🍏", "🍐", "🥝", "🍇", "🥥", "🍅", "🌶️", "🍄", "🧅", "🥦", "🥑", "🍔", "🍕", "🧁", "🎂", "🍬", "🍩", "🍫", "🎈"];
+        let temp, c, p = em.length, min, sec, time;
+
+        //shuffle em
+        if (p) {
+            while (p) {
+                c = Math.floor(Math.random() * (p + 1));
+                temp = em[c];
+                em[c] = em[p - 1];
+                em[p - 1] = temp;
+                p--;
+            }
+        }
+
+
+        function start(r, l) {
+            min = 0, sec = 0, move = 0;
+            $("#time").html("Time: 00:00");
+            $("#moves").html("Moves: 0");
+            time = setInterval(function () {
+                sec++;
+                if (sec == 60) {
+                    min++; sec = 0;
+                }
+                if (sec < 10)
+                    $("#time").html("Time: 0" + min + ":0" + sec);
+                else
+                    $("#time").html("Time: 0" + min + ":" + sec);
+            }, 1000);
+            const no_item = (r * l) / 2;
+            rem = no_item;
+
+            //items
+            const items = [];
+            for (let i = 0; i < no_item; i++) {
+                items.push(em[i]);
+            }
+            for (let i = 0; i < no_item; i++) {
+                items.push(em[i]);
+            }
+
+            //shuffle items
+            let temp, c, p = items.length;
+            if (p) {
+                while (p) {
+                    console.log("work");
+                    c = Math.floor(Math.random() * (p + 1));
+                    temp = items[c];
+                    items[c] = items[p - 1];
+                    items[p - 1] = temp;
+                    p--;
+                }
+            }
+
+            //creat table
+            let n = 1;
+            $("table").html("");
+            for (let i = 0; i < r; i++) {
+                $("table").append("<tr>")
+                for (let j = 0; j < l; j++) {
+                    $("table").append(`<td id='${n}' onclick="change(${n})">
+                        <div class='inner'><div class='front'></div><div class='back'><p>${items[n - 1]}</p></div></div></td>`);
+                    n++;
+                }
+            }
+        }
+
+        //varaible for change function
+        let turn = 0, prev_id, prev_txt, prev_i, move = 0, rem;
+        function change(x) {
+            console.log("x ", x);
+            let i = "#" + x + " .inner";
+            let b = "#" + x + " .inner" + " .back";
+            if (turn == 2 || prev_i == x || $(i).attr("flip") == "block") {
+            }
+            else {
+                $(i).css({ "transform": "rotateY(180deg)" });
+                if (turn == 1) {
+                    turn = 2;
+                    console.log("prev_txt ", prev_txt);
+                    console.log("$(b).text() ", $(b).text());
+
+                    //not same flip 
+                    if (prev_txt !== $(b).text()) {
+                        setTimeout(() => {
+
+                            $(i).css({ "transform": "rotateY(0deg)" });
+                            $(prev_id).css({ "transform": "rotateY(0deg)" });
+                            turn = 0;
+                        }, 1000);
+                        setTimeout(() => {
+                            move++;
+                            $("#move").html(`move: ${move}`)
+                        })
+
+                        console.log("turn 2");
+                    }
+
+                    //same flip
+                    else {
+                        rem--;
+                        $(i).attr("flip", "block");
+                        $(prev_id).attr("flip", "block");
+                        turn = 0;
+                    }
+                }
+                else {
+                    //store flip id and text
+                    prev_i = x;
+                    prev_id = i;
+                    prev_txt = $(b).text();
+                    turn = 1;
+                }
+            }
+
+            //after game complete
+            if (rem == 0) {
+                setTimeout(function () {
+                    clearInterval(time);
+                    if (min == 0) {
+                        time = `${sec} seconds`;
+                    }
+                    else {
+                        time = `${min} minute(s) and ${sec} second(s)`;
+                    }
+                    $("table").html(`<center><div id="iol"><h2>Congrats!</h2><p style="font-size:23px;padding:10px;">You completed the  mode in ${move} moves.
+                         It took you ${time}.
+                        </p><p style="font-size:18px">Comment Your Score!<br/>Play Again ?</p>
+                        <button onclick="start(3, 4)">3 x 4</button> <button onclick="start(4, 4)" style="w">4 x 4</button><button onclick="start(4, 5)">4 x 5</button><button onclick="start(5, 6)">5 x 6</button><button onclick="start(6, 6)">6 x 6</button></div></center>`);
+
+                }, 1500);
+            }
+        }
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

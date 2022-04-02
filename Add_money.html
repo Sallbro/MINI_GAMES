@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .row {
+            margin-top: 20px;
+        }
+
+        .dis_x {
+            display: none;
+        }
+
+        .con:hover .dis_x {
+            cursor: pointer;
+            display: inline;
+            background-color: brown;
+            margin-left: 10px;
+            padding: 7px;
+            border-radius: 10px;
+        }
+
+        .dis_up {
+            background-color: cadetblue;
+            cursor: pointer;
+            margin-left: 10px;
+            padding: 7px;
+            border-radius: 10px;
+        }
+
+        .dis_down {
+            cursor: pointer;
+            background-color: chartreuse;
+            margin-left: 10px;
+            padding: 7px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<body>
+    <div class="row mx-auto">
+        <div class="col-12">
+            <h1>TOTAL AMOUNT:<span id="total_amt">1200</span></h1>
+        </div>
+    </div>
+    <div class="row mx-auto">
+        <div class="col-12">
+            <h1>AVAILABLE AMOUNT:<span id="available_amt">1200</span></h1>
+        </div>
+    </div>
+    <div class="row mx-auto">
+        <div class="col-12">
+            <select id="inc_exp">
+                <option value="inc">+</option>
+                <option value="exp">-</option>
+            </select>
+            <input type="text" id="desc" placeholder="enter query">
+            <input type="number" id="amount" placeholder="enter amount">
+            <button id="submit" onclick="subs()">submit</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 md-12">
+            <h1>incomes</h1>
+            <div id="inc_con">
+            </div>
+        </div>
+        <div class="col-6 md-12">
+            <h1>expanses</h1>
+            <div id="exp_con">
+            </div>
+        </div>
+
+    </div>
+    <!-- <h1>calculator</h1>
+    <input type="number" id="num1"><br>
+    <input type="number" id="num2"><br>
+    <input type="button" value="add" onclick="cal(add)">
+    <input type="button" value="multiply" onclick="cal(mult)">
+    <input type="button" value="subtract" onclick="cal(sub)"><br>
+    <h1>result</h1> <input type="number" id="res"> -->
+
+    <script>
+        // const kal = "sal";
+        // const arr = ['sal', 'man'];
+        // console.log("test", arr.__proto__);
+        // const ob1 = function () {
+        //     this.name = "salman",
+        //         this.age = 19
+        // }
+        // const newobj1=new ob1();
+        // newobj1.prototype.city="mumbai";
+        // ob1.prototype.std=13;
+        // console.log(newobj1);
+        // console.log(ob1);
+        const obj = {
+            allitems: {
+                inc: [],
+                exp: []
+            }
+        };
+        let inc_con = document.getElementById("inc_con");
+        let exp_con = document.getElementById("exp_con");
+        exp_con.addEventListener("click", (event) => {
+            console.log("event con ", event);
+            if (event.target.className == 'dis_x') {
+                console.log("event class ", event);
+                const div = event.target.parentNode;
+                const div2 = div.parentNode;
+                const div3 = div2.parentNode;
+                div3.removeChild(div2);
+            }
+            if (event.target.className == 'dis_up') {
+                console.log("event class ", event);
+                const div = event.target.parentNode;
+                const div2 = div.parentNode;
+                const prenode = div2.previousElementSibling;
+                const div3 = div2.parentNode;
+                if (prenode) {
+                    div3.insertBefore(div2, prenode);
+                }
+            }
+            if (event.target.className == 'dis_down') {
+                console.log("event class ", event);
+                const div = event.target.parentNode;
+                const div2 = div.parentNode;
+                const nextnode = div2.nextElementSibling;
+                const div3 = div2.parentNode;
+                if (nextnode) {
+                    div3.insertBefore(nextnode, div2);
+                }
+            }
+        });
+        inc_con.addEventListener("click", (event) => {
+            if (event.target.className == 'dis_x') {
+                const div = event.target.parentNode;
+                const div2 = div.parentNode;
+                const div3 = div2.parentNode;
+                div3.removeChild(div2);
+            }
+        });
+        function cal_inc_amt() {
+            let sum = 0;
+            obj.allitems.inc.forEach((curr) => {
+                sum = parseFloat(sum + curr.val);
+                console.log("sum ", sum);
+            });
+            return sum;
+        }
+        function cal_exp_amt() {
+            let sum = 0;
+            obj.allitems.exp.forEach((curr) => {
+                sum = parseFloat(sum + curr.val);
+                console.log("sum ", sum);
+            });
+            return sum;
+        }
+        function subs() {
+            let element, html, newhtml;
+            console.log("running");
+            let inc_exp = document.getElementById("inc_exp").value;
+            let desc = document.getElementById("desc").value;
+            let val = parseFloat(document.getElementById("amount").value);
+            let total_amt = document.getElementById("total_amt").textContent;
+            console.log("total_amt ", total_amt);
+
+            if (inc_exp === 'inc') {
+                obj.allitems.inc.push({ 'desc': desc, 'val': val });
+                element = 'inc_con';
+                html = '<div class="row con"><div class="col-6">%desc%<span>%val%</span><span class="dis_up">UP</span><span class="dis_down">DOWN</span><span class="dis_x">X</span></div></div>';
+                const cal_inc_amts = cal_inc_amt();
+                console.log("cal_inc_amt", cal_inc_amts);
+                document.getElementById("total_amt").textContent = parseFloat(cal_inc_amts);
+            }
+            else if (inc_exp === 'exp') {
+                obj.allitems.exp.push({ 'desc': desc, 'val': val });
+                element = 'exp_con';
+                html = '<div class="row con"><div class="col-12">%desc%<span>%val%</span><span class="dis_up">UP</span><span class="dis_down">DOWN</span><span class="dis_x">X</span></div></div>';
+
+            }
+
+            newhtml = html.replace('%desc%', desc);
+            newhtml = newhtml.replace('%val%', val);
+            document.getElementById(element).insertAdjacentHTML("beforeend", newhtml);
+            console.log("desc ", desc);
+            console.log("inc_exp ", inc_exp);
+            console.log("val ", val);
+            console.log("obj", obj);
+            // document.getElementById("desc").value="";
+            // document.getElementById("amount").value="";
+        }
+
+
+        // function cal(num) {
+        //     let n1 = parseFloat(document.getElementById("num1").value);
+        //     let n2 = parseFloat(document.getElementById("num2").value);
+        //     document.getElementById("res").value = num(n1, n2);
+
+        // }
+        // function add(n1, n2) {
+        //     console.log(n1 + n2);
+        //     return n1 + n2;
+        // }
+        // function mult(n1, n2) {
+        //     console.log(n1 * n2);
+        //     return n1 * n2;
+        // }
+        // function sub(n1, n2) {
+        //     console.log(n1 - n2);
+        //     return n1 - n2;
+        // }
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .book {
+            background-color: chartreuse;
+            border-radius: 20px;
+        }
+
+        .form-background {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .form {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 400px;
+            background-color: #131313;
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .button-div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+
+        }
+
+        .input {
+            width: 200px;
+            height: 35px;
+            border: 2px solid #1b1b1b;
+            background-color: #1a191a;
+            margin-top: 10px;
+            color: white;
+            text-overflow: clip;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"> </script>
+</head>
+
+<body>
+    <div id="header-container">
+        <header>
+            <div id="button">
+                <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right"
+                    title="ADD BOOK" onclick="AddBook();">
+                    ADD BOOK</button>
+                <!-- <button class="circle plus" onclick="AddBook();">ADD BOOK</button> -->
+            </div>
+            <h1 id="welcome">Users Library</h1>
+        </header>
+    </div>
+    <div class="container" id="container">
+        <div class="row" id="book-container">
+            <div class="col-12 col-md-5 col-lg-3 m-1 book">
+                <div class="row ml-4" id="book-header">
+                    <button class="col-5 btn btn-secondary" data-toggle="tooltip" data-placement="right"
+                        title="REMOVE BOOK" id="icon_x" onclick="RemoveBook();">REMOVE(X)</button>
+                    <button class="col-5 btn btn-secondary" data-toggle="tooltip" data-placement="right"
+                        title="EDIT BOOK" id="icon_/" onclick="EditBook();">EDIT(/) </button>
+                </div>
+                <h2 id="book-text">The Hobbit</h2>
+                <h4 id="book-text">J. R. R. Tolkien</h4>
+                <p id="book-text">297 Pages</p>
+                <div class="toggle-button">
+                    <div class="inner-circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div id="edit-form">
+        <input type="text" placeholder="title" name="title" id="booktitle" />
+        <input type="text" placeholder="author" name="author" id="bookauthor" />
+        <input type="number" placeholder="pages" name="pages" id="bookpages" />
+        <button onclick="safeinfo()">r</button>
+        <button onclick="cancleinfo()">w</button>
+    </div> -->
+    <script>
+        //varaible
+        let edit_click = 0;
+        function AddBook() {
+            let book_cont = document.getElementById("book-container");
+            let html = '<div class="col-12 col-md-5 col-lg-3 m-1 book"><div class="row ml-4" id="book-header"><button class="col-5 btn btn-secondary" data-toggle="tooltip" data-placement="right"title="REMOVE BOOK" id="icon" onclick="RemoveBook();">REMOVE(X)</button><button class="col-5 btn btn-secondary" data-toggle="tooltip" data-placement="right"title="EDIT BOOK" id="icon" onclick="EditBook();">EDIT(/)</button></div><h2 id="book-text">Book Title</h2><h4 id="book-text">Book Author</h4><p id="book-text">Book Pages</p><div class="toggle-button"><div class="inner-circle"></div></div></div>';
+            book_cont.insertAdjacentHTML("beforeend", html);
+        }
+        function RemoveBook() {
+            if (edit_click == 1) {
+                document.body.removeChild(bookFormBackground);
+            }
+            edit_click = 0;
+            let book_cont = document.getElementById("book-container");
+            let icon_x = document.getElementById("icon_x");
+            // icon_x.addEventListener("click", (event) => {
+            let book_header = event.target.parentNode;
+            let book = book_header.parentNode;
+            book_cont.removeChild(book);
+            // })
+            console.log("rem part ", event.target.parentNode);
+
+        }
+        function EditBook() {
+            document.getElementById("container").style.opacity = 0.4;
+            document.getElementById("container").style.pointerEvents = "none";
+            if (edit_click == 1) {
+                document.body.removeChild(bookFormBackground);
+            }
+            edit_click = 1;
+            console.log("Editing book");
+            //Elements to get book elements
+            let booksHeader = event.target.parentNode;
+            let booksCard = booksHeader.parentNode;
+
+            //Book elements to change
+            bookTitle = booksCard.children[1];
+            bookAuthor = booksCard.children[2];
+            bookPages = booksCard.children[3];
+
+            console.log(bookTitle);
+            console.log(bookAuthor);
+            console.log(bookPages);
+
+            //Create form to fill out new book information
+            //Create elements
+            bookFormBackground = document.createElement('div');
+            bookForm = document.createElement('div');
+            bookFormButtonDiv = document.createElement('div');
+            bookFormName = document.createElement('h2');
+            bookInputTitle = document.createElement('input');
+            bookInputAuthor = document.createElement('input');
+            bookInputPages = document.createElement('input');
+            bookInputSave = document.createElement('button');
+            bookInputCancel = document.createElement('button');
+            bookFormError = document.createElement('p');
+            bookInputSave.addEventListener("click", SaveBookInfo, false);
+            bookInputCancel.addEventListener("click", CancelEdit, false);
+
+            //Give elements properties
+            bookFormBackground.className = 'form-background';
+            bookForm.className = 'form';
+            bookFormButtonDiv.className = 'button-div';
+            bookFormName.textContent = "Book Editor"
+            bookInputTitle.className = 'input';
+            bookInputAuthor.className = 'input';
+            bookInputPages.className = 'input';
+            bookInputTitle.placeholder = "Books Title";
+            bookInputAuthor.placeholder = "Authors Name";
+            bookInputPages.placeholder = "Pages";
+            bookInputTitle.type = 'text';
+            bookInputAuthor.type = 'text';
+            bookInputPages.type = 'number';
+            bookInputSave.textContent = "save";
+            bookInputCancel.textContent = "cancle";
+            bookInputSave.id = 'icon';
+            bookInputCancel.id = 'icon';
+
+            //Add elements to website
+            document.body.appendChild(bookFormBackground);
+            bookFormBackground.appendChild(bookForm);
+            bookForm.appendChild(bookFormName);
+            bookForm.appendChild(bookInputTitle);
+            bookForm.appendChild(bookInputAuthor);
+            bookForm.appendChild(bookInputPages);
+            bookForm.appendChild(bookFormButtonDiv);
+            bookFormButtonDiv.appendChild(bookInputSave);
+            bookFormButtonDiv.appendChild(bookInputCancel);
+            bookForm.appendChild(bookFormError);
+
+            function SaveBookInfo() {
+                if (bookInputTitle.value === "") {
+                    bookFormError.textContent = "Missing book title";
+                } else if (bookInputAuthor.value === "") {
+                    bookFormError.textContent = "Missing book author";
+                } else if (bookInputPages.value === "") {
+                    bookFormError.textContent = "Missing number of pages";
+                } else {
+                    bookTitle.textContent = bookInputTitle.value;
+                    bookAuthor.textContent = bookInputAuthor.value;
+                    bookPages.textContent = bookInputPages.value + " Pages";
+
+                    document.body.removeChild(bookFormBackground);
+                    edit_click = 0;
+                    document.getElementById("container").style.opacity = 1;
+                    document.getElementById("container").style.pointerEvents = "auto";
+                }
+            }
+
+            function CancelEdit() {
+                document.body.removeChild(bookFormBackground);
+                edit_click = 0;
+                document.getElementById("container").style.opacity = 1;
+                document.getElementById("container").style.pointerEvents = "auto";
+            }
+
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
